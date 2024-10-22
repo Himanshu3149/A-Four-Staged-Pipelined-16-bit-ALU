@@ -1,0 +1,14 @@
+VCD info: dumpfile pipe_ALU.vcd opened for output.
+Time =  0, Zout =  x
+Time = 37, Zout =  8
+Time = 77, Zout = 24
+Time = 117, Zout =  3
+Time = 157, Zout = 14
+Time = 197, Zout =  3
+mem[125]=  8
+mem[126]= 24
+mem[127]= 14
+mem[128]=  3
+mem[129]=  3
+mem[130]=  x
+testbench.sv:59: $finish called at 500 (1s)
