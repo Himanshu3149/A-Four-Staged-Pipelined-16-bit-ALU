@@ -1,0 +1,4 @@
+##  CONTROL UNIT
+
+The control unit plays a crucial role in managing the flow of data and controlling the operations of the ALU. It generates control signals to guide the behavior of each pipeline stage. The control unit uses a finite state machine (FSM) to move through the stages in the correct sequence.
+In this project, we are using a ring counter as the basis for the control unit. A ring counter ensures that the control signals are cycled in a fixed order, moving from one stage to the next in the correct sequence, allowing the ALU to operate smoothly without any conflicts between instructions.
