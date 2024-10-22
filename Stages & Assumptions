@@ -1,0 +1,49 @@
+## STAGES OF PIPELINE
+
+# 3.1.1  Stage-1 (Read two 16-bit numbers): 
+In this stage, the ALU reads two 16-bit values from the register bank. The inputs to the registers are provided by the rs1 and rs2 values. During each clock cycle when the ring counter outputs a value of 01, these register values are fetched and stored in temporary registers L12_A and L12_B. This stage mimics the "fetch" part of a traditional pipeline, where data is loaded from the register file into intermediate storage.
+At this stage, the instruction also fetches the function code (func) that tells the ALU what operation to perform in the next stage. Along with the function code, the destination register (rd) and memory address (addr) are also captured and stored in L12_rd and L12_addr.
+
+# Stage-2 (Perform ALU Operation):  
+During the second stage, the ALU performs the operation specified by the func field. Based on the function code, it selects the appropriate operation, such as addition, subtraction, multiplication, etc. For example, if the func code is 0000, the ALU performs an addition operation, and the result is stored in the intermediate register L23_Z. Other operations include bitwise AND, OR, XOR, and shift operations (arithmetic and logical).
+This stage is critical as the ALU carries out the computation using the inputs fetched in the previous stage. At the same time, the destination register and memory address are also passed on to the next stage (L23_rd and L23_addr) to maintain pipeline flow. The operation occurs when the ring counter outputs 10.
+
+# Stage-3 (Write to Register):  
+In the third stage, when the ring counter again outputs 01, the result of the ALU operation, stored in L23_Z, is written back to the destination register (rd). This ensures that the computed result is stored in the proper location in the register bank, making it available for subsequent operations.
+This stage mimics the "write-back" process of a traditional pipeline, where the ALU’s result is written back to the register file. It ensures that after every operation, the register bank is updated, and the values are ready for future computations.
+
+# Stage-4 (Write to Memory):  
+In the final stage, the result (L34_Z) is also written to a memory location specified by the addr value. This happens when the ring counter outputs 10, ensuring that the result is stored in the correct memory address. This memory write is important for operations that need to save data persistently or transfer it between different functional units.
+This stage simulates memory storage operations and shows how the ALU can interface with memory, an essential feature for most real-world applications. The result is written into a 256x16 memory block, providing sufficient storage space for the ALU’s results.
+
+## ASSUMPTIONS:
+
+To ensure the design works smoothly, a few assumptions have been made:
+
+1)	Register Bank:  
+The register bank has 16 registers, each 16 bits wide. To select the correct register, 4 bits are used to specify a register address. Each clock cycle, two registers can be read (for “rs1” and “rs2”) and one register can be written to (“rd”).
+
+2)	Memory:  
+The memory is organized as 256 memory locations, each containing 16 bits of data. The address of the memory location is specified using 8 bits, meaning that the memory can store data in any of the 256 locations.
+
+
+
+3)	ALU Function Selection:  
+The ALU performs different operations based on a 4-bit control signal called “func”. Each combination of these 4 bits corresponds to a specific operation, such as addition, subtraction, multiplication, and various logical operations like AND, OR, and XOR. For example, if “func” is set to `0000`, the ALU performs addition, while if “func” is set to `0010`, it performs multiplication. The operations are detailed in the opcode decoding table below.
+
+
+FUNCTION  CODE (FUNC)  OPERATION
+---------------------------------
+ADD      	0000	    Z = A+ B
+SUB      	0001	    Z = A – B
+MUL      	0010	    Z = A * B
+SELA	    0011	    Z = A
+SELB	    0100	    Z = B
+AND	      0101	    Z = A & B
+OR	      0110	    Z = A | B
+XOR	      0111	    Z = A ^ B
+NEGA	    1000	    Z = ~A
+NEGB	    1001	    Z = ~B
+SRA	      1010	    Z = A >> 1
+SLA	      1011	    Z = A << 1
+
